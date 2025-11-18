@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ViDev – A Complete Development Experience, Fully in the Cloud</title>
+  <meta name="description" content="A powerful, collaborative, cloud-based IDE with real-time editing, terminal, file explorer, voice/video chat, and instant live previews – coming soon." />
+  
+  <!-- This line fixes the problem -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #e0e0e0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+    }
+    .bg-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(100, 65, 255, 0.15) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    header { z-index: 2; margin-bottom: 4rem; }
+    h1 {
+      font-size: 4.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a78bfa, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .tagline {
+      font-size: 1.6rem;
+      color: #bbbbbb;
+      font-weight: 400;
+      max-width: 800px;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 6rem 0;
+      z-index: 2;
+    }
+    .feature-card {
+      background: rgba(30, 30, 40, 0.6);
+      border: 1px solid rgba(100, 100, 120, 0.3);
+      border-radius: 16px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover {
+      border-color: #a78bfa;
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(167, 139, 250, 0.1);
+    }
+    .feature-card h3 {
+      color: #a78bfa;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .cta { margin-top: 4rem; z-index: 2; }
+    .btn {
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      color: white;
+      padding: 1rem 3rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+    }
+    .btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(124, 58, 237, 0.6);
+    }
+    .coming {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      color: #888;
+    }
+    footer {
+      margin-top: 8rem;
+      font-size: 0.9rem;
+      color: #666;
+      z-index: 2;
+    }
+    @media (max-width: 768px) {
+      h1 { font-size: 3rem; }
+      .tagline { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="container">
+    <header>
+      <h1>CloudIDE</h1>
+      <p class="tagline">
+        The full IDE experience — in your browser. Real-time collaboration, terminal, instant live previews, voice & video chat. No setup. No downloads.
+      </p>
+    </header>
+
+    <div class="features">
+      <div class="feature-card">
+        <h3>Monaco-Powered Editor</h3>
+        <p>Syntax highlighting, IntelliSense, multi-file projects — exactly what you love from VS Code.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Real-Time Collaboration</h3>
+        <p>Edit together in real time with Operational Transformation, live cursors, voice & video chat.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Full Terminal Access</h3>
+        <p>Run commands, npm, python, git — everything works inside isolated containers.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Instant Live Preview</h3>
+        <p>One click → your app gets a public HTTPS URL in under 3 seconds. No tunnels needed.</p>
+      </div>
+    </div>
+
+    <div class="cta">
+      <button class="btn" onclick="alert('Launching soon! Join the waitlist on our GitHub repo.')">
+        Get Early Access
+      </button>
+      <p class="coming">Launching Soon • Open Source • Built for Developers</p>
+    </div>
+
+    <footer>
+      © 2025 ViDev by Devika Reddy & Vishnu MK • <a href="https://github.com/yourusername/cloudide" style="color:#a78bfa;">GitHub</a>
+    </footer>
+  </div>
+</body>
+</html>
