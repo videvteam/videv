@@ -3,156 +3,678 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ViDev – A Complete Development Experience, Fully in the Cloud</title>
-  <meta name="description" content="A powerful, collaborative, cloud-based IDE with real-time editing, terminal, file explorer, voice/video chat, and instant live previews – coming soon." />
+  <title>ViDev – Cloud-Based Development Environment</title>
+  <meta name="description" content="A powerful cloud IDE with LSP support, real-time collaboration, and instant deployment." />
   
-  <!-- This line fixes the problem -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #000;
-      color: #e0e0e0;
+      background: #0d1117;
+      color: #e6edf3;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       line-height: 1.6;
       overflow-x: hidden;
     }
-    .container {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
-      text-align: center;
-      position: relative;
-    }
-    .bg-glow {
-      position: absolute;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(100, 65, 255, 0.15) 0%, transparent 70%);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+    .bg-gradient {
+      position: fixed;
+      width: 100%;
+      height: 800px;
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(88, 166, 255, 0.15), transparent);
+      top: 0;
+      left: 0;
       z-index: 0;
       pointer-events: none;
     }
-    header { z-index: 2; margin-bottom: 4rem; }
+    
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header { 
+      text-align: center;
+      padding: 4rem 0 3rem;
+    }
     h1 {
       font-size: 4.5rem;
       font-weight: 700;
-      background: linear-gradient(90deg, #a78bfa, #c084fc);
+      background: linear-gradient(135deg, #58a6ff, #79c0ff, #a5d6ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      letter-spacing: -0.02em;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.03em;
     }
     .tagline {
-      font-size: 1.6rem;
-      color: #bbbbbb;
+      font-size: 1.5rem;
+      color: #8b949e;
       font-weight: 400;
       max-width: 800px;
+      margin: 0 auto 3rem;
     }
+
+    /* Hero Section with Preview on Right */
+    .hero-section {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 4rem;
+      align-items: center;
+      margin: 4rem auto 6rem;
+    }
+
+    .hero-content h2 {
+      font-size: 2.5rem;
+      color: #e6edf3;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .hero-content p {
+      font-size: 1.2rem;
+      color: #8b949e;
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      color: #8b949e;
+      font-size: 1.1rem;
+    }
+
+    .feature-list li::before {
+      content: "✓";
+      color: #58a6ff;
+      font-weight: bold;
+      font-size: 1.4rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1f6feb, #58a6ff);
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(31, 111, 235, 0.35);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(31, 111, 235, 0.5);
+      background: linear-gradient(135deg, #1f6feb, #388bfd);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #58a6ff;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: 2px solid #58a6ff;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(88, 166, 255, 0.1);
+      transform: translateY(-3px);
+    }
+
+    /* IDE Preview Component */
+    .preview-wrapper {
+      position: relative;
+    }
+
+    .ide-preview {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 16px 70px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s ease;
+    }
+    .ide-preview:hover {
+      transform: translateY(-8px);
+    }
+    .window-bar {
+      background: #010409;
+      padding: 0.8rem 1rem;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #30363d;
+    }
+    .window-dots {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+    .window-title {
+      flex: 1;
+      text-align: center;
+      color: #8b949e;
+      font-size: 0.9rem;
+    }
+    .ide-content {
+      display: flex;
+      height: 450px;
+    }
+    .sidebar {
+      width: 180px;
+      background: #010409;
+      border-right: 1px solid #30363d;
+      padding: 1rem 0.5rem;
+    }
+    .file-tree {
+      font-size: 0.8rem;
+    }
+    .folder {
+      margin-bottom: 0.5rem;
+    }
+    .folder-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.5rem;
+      cursor: pointer;
+      border-radius: 6px;
+      color: #8b949e;
+    }
+    .folder-name:hover {
+      background: #161b22;
+    }
+    .file {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.5rem 0.3rem 1.2rem;
+      color: #8b949e;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+    .file:hover {
+      background: #161b22;
+      color: #58a6ff;
+    }
+    .file.active {
+      background: #161b22;
+      color: #58a6ff;
+    }
+    .editor-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .tabs {
+      display: flex;
+      background: #010409;
+      border-bottom: 1px solid #30363d;
+      padding: 0 1rem;
+    }
+    .tab {
+      padding: 0.6rem 1rem;
+      color: #8b949e;
+      font-size: 0.8rem;
+      border-right: 1px solid #30363d;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      background: #161b22;
+      color: #58a6ff;
+    }
+    .tab:hover {
+      color: #e6edf3;
+    }
+    .code-editor {
+      flex: 1;
+      padding: 1.5rem;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      overflow: auto;
+    }
+    .code-line {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .line-number {
+      color: #6e7681;
+      user-select: none;
+      text-align: right;
+      min-width: 25px;
+    }
+    .code-content {
+      flex: 1;
+    }
+    .keyword { color: #ff7b72; }
+    .function { color: #d2a8ff; }
+    .string { color: #a5d6ff; }
+    .comment { color: #8b949e; font-style: italic; }
+    .variable { color: #79c0ff; }
+
     .features {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2.5rem;
-      max-width: 1200px;
-      margin: 6rem 0;
-      z-index: 2;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin: 6rem auto;
     }
     .feature-card {
-      background: rgba(30, 30, 40, 0.6);
-      border: 1px solid rgba(100, 100, 120, 0.3);
-      border-radius: 16px;
+      background: rgba(22, 27, 34, 0.7);
+      border: 1px solid #30363d;
+      border-radius: 12px;
       padding: 2rem;
       backdrop-filter: blur(10px);
       transition: all 0.3s ease;
     }
     .feature-card:hover {
-      border-color: #a78bfa;
-      transform: translateY(-10px);
-      box-shadow: 0 20px 40px rgba(167, 139, 250, 0.1);
+      border-color: #58a6ff;
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(88, 166, 255, 0.15);
     }
-    .feature-card h3 {
-      color: #a78bfa;
-      font-size: 1.4rem;
+    .feature-icon {
+      font-size: 2rem;
       margin-bottom: 1rem;
     }
-    .cta { margin-top: 4rem; z-index: 2; }
-    .btn {
-      background: linear-gradient(90deg, #7c3aed, #a78bfa);
-      color: white;
-      padding: 1rem 3rem;
+    .feature-card h3 {
+      color: #58a6ff;
       font-size: 1.3rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
+      margin-bottom: 0.8rem;
+    }
+    .feature-card p {
+      color: #8b949e;
+      line-height: 1.6;
+    }
+
+    /* Team Section */
+    .team-section {
+      margin: 8rem auto;
+      text-align: center;
+    }
+
+    .team-section h2 {
+      font-size: 3rem;
+      color: #e6edf3;
+      margin-bottom: 1rem;
+    }
+
+    .team-section .subtitle {
+      font-size: 1.2rem;
+      color: #8b949e;
+      margin-bottom: 4rem;
+    }
+
+    .team-grid {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .team-member {
+      background: rgba(22, 27, 34, 0.7);
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      max-width: 400px;
+      backdrop-filter: blur(10px);
       transition: all 0.3s ease;
-      box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
     }
-    .btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(124, 58, 237, 0.6);
+
+    .team-member:hover {
+      border-color: #58a6ff;
+      transform: translateY(-10px);
+      box-shadow: 0 20px 50px rgba(88, 166, 255, 0.2);
     }
-    .coming {
-      margin-top: 1.5rem;
+
+    .profile-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #58a6ff;
+      margin: 0 auto 2rem;
+      object-fit: cover;
+      box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
+    }
+
+    .team-member h3 {
+      font-size: 1.8rem;
+      color: #e6edf3;
+      margin-bottom: 0.5rem;
+    }
+
+    .team-member .role {
       font-size: 1.1rem;
-      color: #888;
+      color: #58a6ff;
+      margin-bottom: 2rem;
+      font-weight: 500;
     }
+
+    .contact-info {
+      text-align: left;
+      margin-top: 2rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      color: #8b949e;
+      font-size: 0.95rem;
+    }
+
+    .contact-item svg {
+      width: 20px;
+      height: 20px;
+      fill: #58a6ff;
+      flex-shrink: 0;
+    }
+
+    .contact-item a {
+      color: #58a6ff;
+      text-decoration: none;
+      transition: color 0.2s;
+      word-break: break-all;
+    }
+
+    .contact-item a:hover {
+      color: #79c0ff;
+      text-decoration: underline;
+    }
+
     footer {
       margin-top: 8rem;
+      padding: 3rem 0;
       font-size: 0.9rem;
-      color: #666;
-      z-index: 2;
+      color: #6e7681;
+      text-align: center;
+      border-top: 1px solid #21262d;
     }
+    footer a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .ide-content { height: 400px; }
+      .sidebar { width: 160px; }
+    }
+
     @media (max-width: 768px) {
       h1 { font-size: 3rem; }
-      .tagline { font-size: 1.3rem; }
+      .tagline { font-size: 1.2rem; }
+      .hero-content h2 { font-size: 2rem; }
+      .hero-content p { font-size: 1rem; }
+      .cta-buttons {
+        flex-direction: column;
+      }
+      .ide-content { 
+        flex-direction: column;
+        height: auto;
+      }
+      .sidebar { 
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #30363d;
+      }
+      .code-editor {
+        min-height: 300px;
+      }
+      .team-section h2 {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="bg-glow"></div>
+  <div class="bg-gradient"></div>
   <div class="container">
     <header>
-      <h1>ViDev Cloud based IDE</h1>
+      <h1>ViDev Cloud IDE</h1>
       <p class="tagline">
-        The full IDE experience — in your browser. Real-time collaboration, terminal, instant live previews, voice & video chat. No setup. No downloads.
+        Your complete development environment in the cloud. Code, collaborate, and deploy — all from your browser.
       </p>
     </header>
 
+    <!-- Hero Section with Preview on Right -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h2>Professional Development, Zero Setup</h2>
+        <p>
+          ViDev brings the power of a full-featured IDE to your browser. Work on any device, collaborate in real-time, and deploy instantly — no installation required.
+        </p>
+        <ul class="feature-list">
+          <li>Full Language Server Protocol (LSP) support</li>
+          <li>Real-time collaborative editing</li>
+          <li>Integrated Linux terminal</li>
+          <li>One-click deployment with HTTPS</li>
+          <li>Pre-configured development environments</li>
+          <li>Built-in voice & video chat</li>
+        </ul>
+        <div class="cta-buttons">
+          <a href="#" class="btn-primary" onclick="alert('Join our waitlist! Star us on GitHub.'); return false;">Get Early Access</a>
+          <a href="#team" class="btn-secondary">Meet the Team</a>
+        </div>
+      </div>
+
+      <!-- IDE Preview -->
+      <div class="preview-wrapper">
+        <div class="ide-preview">
+          <div class="window-bar">
+            <div class="window-dots">
+              <div class="dot red"></div>
+              <div class="dot yellow"></div>
+              <div class="dot green"></div>
+            </div>
+            <div class="window-title">ViDev – workspace/react-app</div>
+            <div style="width: 60px;"></div>
+          </div>
+          <div class="ide-content">
+            <div class="sidebar">
+              <div class="file-tree">
+                <div class="folder">
+                  <div class="folder-name">📁 src</div>
+                  <div class="file active">📄 App.tsx</div>
+                  <div class="file">📄 index.tsx</div>
+                  <div class="file">📄 styles.css</div>
+                </div>
+                <div class="folder">
+                  <div class="folder-name">📁 components</div>
+                  <div class="file">📄 Header.tsx</div>
+                  <div class="file">📄 Button.tsx</div>
+                </div>
+                <div class="folder">
+                  <div class="folder-name">📁 public</div>
+                </div>
+                <div class="file">📄 package.json</div>
+              </div>
+            </div>
+            <div class="editor-area">
+              <div class="tabs">
+                <div class="tab active">App.tsx</div>
+                <div class="tab">index.tsx</div>
+              </div>
+              <div class="code-editor">
+                <div class="code-line">
+                  <span class="line-number">1</span>
+                  <span class="code-content"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">2</span>
+                  <span class="code-content"><span class="keyword">import</span> { Header } <span class="keyword">from</span> <span class="string">'./components/Header'</span>;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">3</span>
+                  <span class="code-content"></span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">4</span>
+                  <span class="code-content"><span class="keyword">function</span> <span class="function">App</span>() {</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">5</span>
+                  <span class="code-content">  <span class="keyword">const</span> [<span class="variable">count</span>, <span class="variable">setCount</span>] = <span class="function">useState</span>(<span class="string">0</span>);</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">6</span>
+                  <span class="code-content"></span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">7</span>
+                  <span class="code-content">  <span class="keyword">return</span> (</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">8</span>
+                  <span class="code-content">    &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"app"</span>&gt;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">9</span>
+                  <span class="code-content">      &lt;<span class="variable">Header</span> /&gt;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">10</span>
+                  <span class="code-content">      &lt;<span class="variable">h1</span>&gt;Welcome to ViDev&lt;/<span class="variable">h1</span>&gt;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">11</span>
+                  <span class="code-content">      &lt;<span class="variable">button</span> <span class="variable">onClick</span>={() =&gt; <span class="function">setCount</span>(count + 1)}&gt;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">12</span>
+                  <span class="code-content">        Count: {count}</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">13</span>
+                  <span class="code-content">      &lt;/<span class="variable">button</span>&gt;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">14</span>
+                  <span class="code-content">    &lt;/<span class="variable">div</span>&gt;</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">15</span>
+                  <span class="code-content">  );</span>
+                </div>
+                <div class="code-line">
+                  <span class="line-number">16</span>
+                  <span class="code-content">}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
     <div class="features">
       <div class="feature-card">
-        <h3>Monaco-Powered Editor</h3>
-        <p>Syntax highlighting, IntelliSense, multi-file projects — exactly what you love from VS Code.</p>
+        <!-- <div class="feature-icon">⚡</div> -->
+        <h3>Language Server Protocol</h3>
+        <p>Full IntelliSense with LSP support. Auto-completion, go-to-definition, real-time diagnostics, and code navigation — just like your local IDE.</p>
       </div>
       <div class="feature-card">
+        <!-- <div class="feature-icon">👥</div> -->
         <h3>Real-Time Collaboration</h3>
-        <p>Edit together in real time with Operational Transformation, live cursors, voice & video chat.</p>
+        <p>Code together with live cursors, presence indicators, and integrated voice/video chat. Changes sync instantly across all participants.</p>
       </div>
       <div class="feature-card">
-        <h3>Full Terminal Access</h3>
-        <p>Run commands, npm, python, git — everything works inside isolated containers.</p>
+        <!-- <div class="feature-icon">🖥️</div> -->
+        <h3>Integrated Terminal</h3>
+        <p>Full Linux terminal in your browser. Run any command, install packages, use git — all in isolated, secure containers.</p>
       </div>
       <div class="feature-card">
-        <h3>Instant Live Preview</h3>
-        <p>One click → your app gets a public HTTPS URL in under 3 seconds. No tunnels needed.</p>
+        <!-- <div class="feature-icon">🚀</div> -->
+        <h3>Instant Deployment</h3>
+        <p>Deploy your app with one click. Get a live HTTPS URL in seconds with automatic SSL, CDN, and global edge network.</p>
+      </div>
+      <div class="feature-card">
+        <!-- <div class="feature-icon">📦</div> -->
+        <h3>Pre-configured Environments</h3>
+        <p>Start coding immediately with pre-built environments for React, Node.js, Python, Go, and more. No setup required.</p>
+      </div>
+      <div class="feature-card">
+        <!-- <div class="feature-icon">🔒</div> -->
+        <h3>Secure & Isolated</h3>
+        <p>Each workspace runs in its own secure container. Your code and environment are completely isolated and protected.</p>
       </div>
     </div>
 
-    <div class="cta">
-      <button class="btn" onclick="alert('Launching soon! Join the waitlist on our GitHub repo.')">
-        Get Early Access
-      </button>
-      <p class="coming">Launching Soon • Open Source • Built for Developers</p>
-    </div>
+    <!-- Team Section -->
+    <section class="team-section" id="team">
+      <h2>Meet the Team</h2>
+      <p class="subtitle">Building the future of cloud development</p>
+      
+      <div class="team-grid">
+        <div class="team-member">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23161b22' width='200' height='200'/%3E%3Ccircle cx='100' cy='80' r='40' fill='%2358a6ff'/%3E%3Cpath d='M100 130 Q70 130 50 160 L150 160 Q130 130 100 130' fill='%2358a6ff'/%3E%3C/svg%3E" alt="Vishnu MK" class="profile-photo">
+          <h3>Vishnu MK</h3>
+          <p class="role">Founder & Lead Developer</p>
+          
+          <div class="contact-info">
+            <div class="contact-item">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              <a href="mailto:vishnumuralidhar.mk@gmail.com">vishnumuralidhar.mk@gmail.com</a>
+            </div>
+            <div class="contact-item">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+              <span>+91 9846094134</span>
+            </div>
+            <div class="contact-item">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+              <a href="https://www.linkedin.com/in/vishnu-muralidhar-mk" target="_blank" rel="noopener">linkedin.com/in/vishnu-muralidhar-mk</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <footer>
-      © 2025 ViDev Team Hyderabad, India • <a href="https://github.com/yourusername/cloudide" style="color:#a78bfa;">GitHub</a>
+      <p>© 2025 ViDev Team • Hyderabad, India • <a href="https://github.com/yourusername/videv">Star us on GitHub</a></p>
+      <p style="margin-top: 1rem; font-size: 0.85rem;">Open Source • Built by Developers, for Developers</p>
     </footer>
   </div>
 </body>
